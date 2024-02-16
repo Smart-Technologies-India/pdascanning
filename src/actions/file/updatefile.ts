@@ -1,0 +1,81 @@
+"use server";
+
+import { errorToString } from "@/utils/methods";
+import prisma from "../../../prisma/database";
+import { ApiResponseType } from "@/models/response";
+import { file, file_type } from "@prisma/client";
+import { number } from "valibot";
+
+interface UpdateFilePayload {
+  id: number;
+  file_id?: string;
+  file_no?: string;
+  applicant_name?: string;
+  survey_number?: string;
+  year?: number;
+  aadhar?: string;
+  remarks?: string;
+  typeId?: number;
+  villageId?: number;
+  file_location?: string;
+  userId?: number;
+  assign?: number;
+  startAt?: string;
+  endAt?: string;
+}
+
+const updateFile = async (
+  payload: UpdateFilePayload
+): Promise<ApiResponseType<file | null>> => {
+  try {
+    const data_to_update: any = {};
+
+    if (payload.file_id) data_to_update.file_id = payload.file_id;
+    if (payload.file_no) data_to_update.file_no = payload.file_no;
+    if (payload.applicant_name)
+      data_to_update.applicant_name = payload.applicant_name;
+    if (payload.survey_number)
+      data_to_update.survey_number = payload.survey_number;
+    if (payload.year) data_to_update.year = payload.year;
+    if (payload.aadhar) data_to_update.aadhar = payload.aadhar;
+    if (payload.remarks) data_to_update.remarks = payload.remarks;
+    if (payload.typeId) data_to_update.typeId = payload.typeId;
+    if (payload.villageId) data_to_update.villageId = payload.villageId;
+    if (payload.file_location)
+      data_to_update.file_location = payload.file_location;
+    if (payload.userId) data_to_update.userId = payload.userId;
+    if (payload.assign) data_to_update.assign = payload.assign;
+    if (payload.startAt) data_to_update.startAt = new Date(payload.startAt);
+    if (payload.endAt) data_to_update.endAt = new Date(payload.endAt);
+
+    const updatefile = await prisma.file.update({
+      where: { id: parseInt(payload.id.toString()) },
+      data: data_to_update,
+    });
+
+    if (!updatefile)
+      return {
+        status: false,
+        data: null,
+        message: "Invalid id. Please try again.",
+        functionname: "updateFile",
+      };
+
+    return {
+      status: true,
+      data: updatefile,
+      message: "File updated successfully",
+      functionname: "updateFile",
+    };
+  } catch (e) {
+    const response: ApiResponseType<null> = {
+      status: false,
+      data: null,
+      message: errorToString(e),
+      functionname: "updateFile",
+    };
+    return response;
+  }
+};
+
+export default updateFile;
