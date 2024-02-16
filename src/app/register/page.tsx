@@ -30,11 +30,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { safeParse } from "valibot";
 
-interface AdminProps {
-  id: any;
-}
-
-export default function Admin(props: AdminProps) {
+export default function Admin() {
   const [isLoading, setLoading] = useState<boolean>(true);
 
   const router = useRouter();
@@ -43,7 +39,7 @@ export default function Admin(props: AdminProps) {
   const repassword = useRef<HTMLInputElement>(null);
   const [role, setRole] = useState<string | null>(null);
 
-  const [userdata, setUserData] = useState<user | null>(null);
+  // const [userdata, setUserData] = useState<user | null>(null);
 
   const onSubmit = async () => {
     const result = safeParse(RegisterSchema, {
@@ -80,12 +76,12 @@ export default function Admin(props: AdminProps) {
 
   const init = async () => {
     setLoading(true);
-    const response = await GetUser({ id: parseInt(props.id) });
-    if (response.status) {
-      setUserData((val) => response.data);
-    } else {
-      toast.error(response.message);
-    }
+    // const response = await GetUser({ id: parseInt(props.id) });
+    // if (response.status) {
+    //   setUserData((val) => response.data);
+    // } else {
+    //   toast.error(response.message);
+    // }
 
     setLoading(false);
   };
@@ -114,11 +110,11 @@ export default function Admin(props: AdminProps) {
     <>
       <div className="min-h-screen p-2 mx-auto w-5/6">
         <Card>
-          <CardHeader className="py-2 px-4 flex flex-row items-center">
+          {/* <CardHeader className="py-2 px-4 flex flex-row items-center">
             <h1 className="text-xl">{userdata?.username}</h1>
             <p className="text-2xl grow text-center">PDA Scanning</p>
             <Button onClick={logoutbtn}>Logout</Button>
-          </CardHeader>
+          </CardHeader> */}
         </Card>
         <Card className="w-72 mx-auto mt-6">
           <CardHeader>
