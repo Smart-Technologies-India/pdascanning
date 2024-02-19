@@ -37,6 +37,8 @@ model user {
   deletedAt    DateTime?
   users_files  file[]         @relation("users")
   assign_files file[]         @relation("assign")
+  meta         file[]         @relation("meta")
+  qc           file[]         @relation("qc")
   fromuser     problem_file[] @relation("fromuser")
   scanneruser  problem_file[] @relation("scanneruser")
 }
@@ -78,6 +80,11 @@ model file {
   userId         Int
   assignTo       user?          @relation("assign", fields: [assign], references: [id])
   assign         Int?
+  metaId         user?          @relation("meta", fields: [meta], references: [id])
+  meta           Int?
+  qcId           user?          @relation("qc", fields: [qc], references: [id])
+  qc             Int?
+  pagecount      Int?
   startAt        DateTime?
   endAt          DateTime?
   createdAt      DateTime       @default(now())

@@ -14,10 +14,12 @@ const UserProblemFile = async (
   try {
     const problemfile = await prisma.problem_file.findMany({
       where: {
+        NOT: [{ status: "COMPLETED" }],
         scannerUserId: parseInt(payload.id),
       },
       include: {
         scanneruser: true,
+        file: true,
       },
     });
 

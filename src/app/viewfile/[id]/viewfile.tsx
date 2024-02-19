@@ -90,10 +90,12 @@ const ViewFile = (props: ViewFileProps) => {
   };
 
   const solved = async () => {
-    console.log("problemfile", problemfile);
     const updatestatus = await updateStatus({
       status: "COMPLETED",
-      id: parseInt(problemfile.id),
+      id: problemfile == null ? 0 : parseInt(problemfile.id ?? "0"),
+      fileid: props.fileid,
+      fromUserId: props.id,
+      toUserId: filedata.assignTo.id,
     });
     if (updatestatus.status) {
       init();
@@ -288,52 +290,47 @@ const ViewFile = (props: ViewFileProps) => {
                   </Button>
                 </>
               )}
-
-              {}
             </>
           ) : (
             <></>
           )}
         </Card>
 
-        {/* <div className="flex gap-4 mt-4 w-full flex-wrap">
-          <Card className="p-2 min-w-60 flex-1">
-            <h1 className="text-center text-xl font-semibold">Names</h1>
-            {filedata.file_name.length > 0 ? (
-              <div>
-                {filedata.file_name.map((val: any, index: number) => (
-                  <h1 key={index}>
-                    {index + 1}. {val.name}
-                  </h1>
-                ))}
-              </div>
-            ) : (
-              <h1 className="text-center mt-2">No File Name</h1>
-            )}
-          </Card>
-
-          <Card className="p-2 min-w-60 flex-1">
-            <h1 className="text-center text-xl font-semibold">File survey</h1>
-            {filedata.file_survey.length > 0 ? (
-              <div>
-                {filedata.file_survey.map((val: any, index: number) => (
-                  <h1 key={index}>
-                    {index + 1}. {val.survey_number}
-                  </h1>
-                ))}
-              </div>
-            ) : (
-              <h1 className="text-center mt-2">No File survey</h1>
-            )}
-          </Card>
-        </div>
-        {filedata.verifiedAt == null ? (
-          <Button className="w-full mt-4" onClick={verifyfile}>
-            Verify File
-          </Button>
-        ) : (
+        {userdata.role == "ENTRY" || userdata.role == "SCANNER" ? (
           <></>
-        )} */}
+        ) : (
+          <div className="flex gap-4 mt-4 w-full flex-wrap">
+            <Card className="p-2 min-w-60 flex-1">
+              <h1 className="text-center text-xl font-semibold">Names</h1>
+              {filedata.file_name.length > 0 ? (
+                <div>
+                  {filedata.file_name.map((val: any, index: number) => (
+                    <h1 key={index}>
+                      {index + 1}. {val.name}
+                    </h1>
+                  ))}
+                </div>
+              ) : (
+                <h1 className="text-center mt-2">No File Name</h1>
+              )}
+            </Card>
+
+            <Card className="p-2 min-w-60 flex-1">
+              <h1 className="text-center text-xl font-semibold">File survey</h1>
+              {filedata.file_survey.length > 0 ? (
+                <div>
+                  {filedata.file_survey.map((val: any, index: number) => (
+                    <h1 key={index}>
+                      {index + 1}. {val.survey_number}
+                    </h1>
+                  ))}
+                </div>
+              ) : (
+                <h1 className="text-center mt-2">No File survey</h1>
+              )}
+            </Card>
+          </div>
+        )}
       </div>
     </>
   );

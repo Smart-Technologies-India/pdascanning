@@ -36,6 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import QCProblemFile from "@/actions/problemfile/qcproblemfile";
+import GetQcFile from "@/actions/file/getqcfile";
 
 interface QcProps {
   id: any;
@@ -44,12 +45,14 @@ const Qc = (props: QcProps) => {
   const router = useRouter();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [userdata, setUserData] = useState<user | null>(null);
-  const [assigns, setAssigns] = useState<user[]>([]);
-  const [fileTypes, setFileTypes] = useState<file_type[]>([]);
+  // const [assigns, setAssigns] = useState<user[]>([]);
+  // const [fileTypes, setFileTypes] = useState<file_type[]>([]);
 
   const [isSearch, setSearch] = useState<boolean>(false);
   const [searchData, setSearchData] = useState<file[] | null>(null);
   const [problemFile, setProblemFile] = useState<any[] | null>(null);
+
+  const [scanned, setScanned] = useState<file[] | null>(null);
 
   const init = async () => {
     setLoading(true);
@@ -60,20 +63,24 @@ const Qc = (props: QcProps) => {
       toast.error(response.message);
     }
 
-    const scanner_response = await GetScanners({});
-    if (scanner_response.status) {
-      setAssigns(scanner_response.data!);
-    }
+    // const scanner_response = await GetScanners({});
+    // if (scanner_response.status) {
+    //   setAssigns(scanner_response.data!);
+    // }
 
-    const file_type_response = await getFileType({});
-    if (file_type_response.status) {
-      setFileTypes(file_type_response.data!);
-    }
+    // const file_type_response = await getFileType({});
+    // if (file_type_response.status) {
+    //   setFileTypes(file_type_response.data!);
+    // }
 
     const probfile: any = await QCProblemFile({ id: props.id });
     if (probfile.status) {
-      console.log(probfile.data![0].scanneruser.username);
       setProblemFile(probfile.data);
+    }
+
+    const scannedfile = await GetQcFile({ id: parseInt(props.id) });
+    if (scannedfile.status) {
+      setScanned(scannedfile.data);
     }
 
     setLoading(false);
@@ -83,19 +90,17 @@ const Qc = (props: QcProps) => {
     init();
   }, []);
 
-  const [year, setYear] = useState<string | null>(null);
+  // const [year, setYear] = useState<string | null>(null);
+  // const [fileType, setFileType] = useState<number>(0);
+  // const [assign, setAssign] = useState<number>(0);
 
-  const [fileType, setFileType] = useState<number>(0);
-  const [assign, setAssign] = useState<number>(0);
-
+  const file_id = useRef<HTMLInputElement>(null);
   const file_no = useRef<HTMLInputElement>(null);
 
   const search = async () => {
     const filesearch: ApiResponseType<file[] | null> = await fileSearch({
+      file_id: file_id.current!.value,
       file_no: file_no.current!.value,
-      year: year == null || year == undefined ? undefined : parseInt(year),
-      typeId: fileType,
-      assign: assign,
     });
 
     if (filesearch.status) {
@@ -116,14 +121,14 @@ const Qc = (props: QcProps) => {
     }
   };
 
-  type YearProps = {
-    value: string;
-    label: string;
-  };
-  const options: YearProps[] = Array.from({ length: 63 }, (_, i) => ({
-    value: (i + 1960).toString(),
-    label: (i + 1960).toString(),
-  }));
+  // type YearProps = {
+  //   value: string;
+  //   label: string;
+  // };
+  // const options: YearProps[] = Array.from({ length: 65 }, (_, i) => ({
+  //   value: (i + 1960).toString(),
+  //   label: (i + 1960).toString(),
+  // }));
 
   if (isLoading)
     return (
@@ -145,6 +150,17 @@ const Qc = (props: QcProps) => {
         <h1 className="text-center text-2xl font-medium">File Details</h1>
         <div className="flex gap-2 items-center mt-4">
           <label htmlFor="fileid" className="w-60">
+            File Id :
+          </label>
+          <Input
+            placeholder="Enter File No"
+            id="fileid"
+            name="fileid"
+            ref={file_id}
+          />
+        </div>
+        <div className="flex gap-2 items-center mt-4">
+          <label htmlFor="fileid" className="w-60">
             File No :
           </label>
           <Input
@@ -154,7 +170,7 @@ const Qc = (props: QcProps) => {
             ref={file_no}
           />
         </div>
-        <div className="flex gap-2 items-center mt-4">
+        {/* <div className="flex gap-2 items-center mt-4">
           <label htmlFor="fileid" className="w-60">
             File Type :
           </label>
@@ -216,7 +232,7 @@ const Qc = (props: QcProps) => {
               </SelectGroup>
             </SelectContent>
           </Select>
-        </div>
+        </div> */}
       </Card>
       <Button className="w-full mt-4" onClick={search}>
         Search
@@ -309,6 +325,54 @@ const Qc = (props: QcProps) => {
         ) : (
           <div className="h-32 flex items-center justify-center">
             <p>There is no problem file</p>
+          </div>
+        )}
+      </Card>
+      <Card className="mt-6">
+        <CardHeader className="py-2 px-4 flex flex-row items-center">
+          <h1 className="text-xl">Scanner Completed</h1>
+          <div className="grow"></div>
+        </CardHeader>
+        {scanned && scanned.length > 0 ? (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">File Id</TableHead>
+                  <TableHead>File No</TableHead>
+                  <TableHead>Year</TableHead>
+                  <TableHead>File Type</TableHead>
+                  <TableHead>Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {scanned.map((val: any) => {
+                  if (val.endAt == null) return null;
+                  return (
+                    <TableRow key={val.id}>
+                      <TableCell className="font-medium">
+                        {val.file_id}
+                      </TableCell>
+                      <TableCell>{val.file_no}</TableCell>
+
+                      <TableCell>{val.year}</TableCell>
+                      <TableCell>{val.type.name}</TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => router.push(`/viewfile/${val.id}`)}
+                        >
+                          View
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="h-32 flex items-center justify-center">
+            <p>No data found</p>
           </div>
         )}
       </Card>

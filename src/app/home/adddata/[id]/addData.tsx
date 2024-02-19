@@ -27,6 +27,7 @@ import { safeParse } from "valibot";
 import { AddFileSchema } from "@/schemas/adddata";
 import { ApiResponseType } from "@/models/response";
 import AddFile from "@/actions/file/addfile";
+import updateFile from "@/actions/file/updatefile";
 
 interface AddMetaDataProps {
   id: number;
@@ -61,6 +62,23 @@ const AddMetaData = (props: AddMetaDataProps) => {
       toast.error(fileresponse.message);
     }
 
+    if (
+      fileresponse.data?.meta == null ||
+      fileresponse.data.meta == undefined
+    ) {
+      const filemetaadd = await updateFile({
+        id: props.fileid,
+        meta: props.id,
+      });
+      if (!filemetaadd.status) {
+        router.back();
+      }
+    } else {
+      if (fileresponse.data?.meta != props.id) {
+        router.back();
+      }
+    }
+
     setLoading(false);
   };
 
@@ -70,7 +88,7 @@ const AddMetaData = (props: AddMetaDataProps) => {
 
   const [village, setVillage] = useState<number>(0);
 
-  const file_no = useRef<HTMLInputElement>(null);
+  const pagenumber = useRef<HTMLInputElement>(null);
   const applicant_name = useRef<HTMLInputElement>(null);
   const survey = useRef<HTMLInputElement>(null);
   const adhar = useRef<HTMLInputElement>(null);
@@ -99,6 +117,8 @@ const AddMetaData = (props: AddMetaDataProps) => {
         villageId: result.output.villageId,
         names: Array.from(nameset),
         surveyNumbers: Array.from(surveyset),
+        page: parseInt(pagenumber.current?.value ?? "0"),
+        meta: props.id,
       });
       if (filesubmit.status) {
         toast.success("File Submitted Successfully");
@@ -130,7 +150,7 @@ const AddMetaData = (props: AddMetaDataProps) => {
     value: string;
     label: string;
   };
-  const options: YearProps[] = Array.from({ length: 63 }, (_, i) => ({
+  const options: YearProps[] = Array.from({ length: 65 }, (_, i) => ({
     value: (i + 1960).toString(),
     label: (i + 1960).toString(),
   }));
@@ -153,6 +173,12 @@ const AddMetaData = (props: AddMetaDataProps) => {
       </Card>
       <Card className=" h-full p-2 mt-4 px-6">
         <h1 className="text-center text-2xl font-medium">File Details</h1>
+        <div className="flex gap-2 items-center mt-4">
+          <label htmlFor="fileid" className="w-60">
+            File Id :
+          </label>
+          <p>{filedata!.file_id}</p>
+        </div>
         <div className="flex gap-2 items-center mt-4">
           <label htmlFor="fileid" className="w-60">
             File No :
@@ -204,6 +230,17 @@ const AddMetaData = (props: AddMetaDataProps) => {
             id="applicant_name"
             name="applicant_name"
             ref={applicant_name}
+          />
+        </div>
+        <div className="flex gap-2 items-center  mt-4">
+          <label htmlFor="applicant_name" className="w-60">
+            Page Number :
+          </label>
+          <Input
+            placeholder="Enter page number"
+            id="page_number"
+            name="page_number"
+            ref={pagenumber}
           />
         </div>
         <div className="flex gap-2 items-center  mt-4">

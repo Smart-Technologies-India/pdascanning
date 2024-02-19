@@ -22,6 +22,8 @@ interface UpdateFilePayload {
   assign?: number;
   startAt?: string;
   endAt?: string;
+  meta?: number;
+  qc?: number;
 }
 
 const updateFile = async (
@@ -47,7 +49,9 @@ const updateFile = async (
     if (payload.assign) data_to_update.assign = payload.assign;
     if (payload.startAt) data_to_update.startAt = new Date(payload.startAt);
     if (payload.endAt) data_to_update.endAt = new Date(payload.endAt);
-
+    if (payload.meta) data_to_update.meta = payload.meta;
+    if (payload.qc) data_to_update.qc = payload.qc;
+    
     const updatefile = await prisma.file.update({
       where: { id: parseInt(payload.id.toString()) },
       data: data_to_update,

@@ -64,6 +64,9 @@ const Scanner = (props: ScannerProps) => {
     const updatestatus = await updateStatus({
       status: status,
       id: parseInt(id),
+      fileid: 0,
+      toUserId: 0,
+      fromUserId: 0,
     });
     if (updatestatus.status) {
       init();
@@ -138,7 +141,7 @@ const Scanner = (props: ScannerProps) => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">File Id</TableHead>
-                  <TableHead>File Number</TableHead>
+                  <TableHead>File No</TableHead>
                   <TableHead>Year</TableHead>
                   <TableHead>File Type</TableHead>
                   <TableHead>Start</TableHead>
@@ -149,7 +152,7 @@ const Scanner = (props: ScannerProps) => {
               <TableBody>
                 {searchData.map((val: any) => (
                   <TableRow key={val.id}>
-                    <TableCell className="font-medium">{val.id}</TableCell>
+                    <TableCell className="font-medium">{val.file_id}</TableCell>
                     <TableCell className="font-medium">{val.file_no}</TableCell>
                     <TableCell>{val.year}</TableCell>
                     <TableCell>{val.type.name}</TableCell>
@@ -204,8 +207,8 @@ const Scanner = (props: ScannerProps) => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[100px]">Id</TableHead>
                   <TableHead className="w-[100px]">File Id</TableHead>
+                  <TableHead className="w-[100px]">File No</TableHead>
                   <TableHead className="w-[100px]">Pages</TableHead>
                   <TableHead>User</TableHead>
                   <TableHead>Status</TableHead>
@@ -216,7 +219,9 @@ const Scanner = (props: ScannerProps) => {
                 {problemFile.map((val: any) => {
                   return (
                     <TableRow key={val.id}>
-                      <TableCell className="font-medium">{val.id}</TableCell>
+                      <TableCell className="font-medium">
+                        {val.file.file_id}
+                      </TableCell>
                       <TableCell className="font-medium">
                         {val.fileId}
                       </TableCell>

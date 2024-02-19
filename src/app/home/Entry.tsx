@@ -91,9 +91,8 @@ const EntryForm = (props: EntryProps) => {
         file_no.current!.value = "";
 
         toast.success("File Submitted Successfully");
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+
+        router.replace(`/viewfile/${filesubmit!.data!.id}`);
       } else {
         toast.error(filesubmit.message);
       }
@@ -121,7 +120,7 @@ const EntryForm = (props: EntryProps) => {
     value: string;
     label: string;
   };
-  const options: YearProps[] = Array.from({ length: 63 }, (_, i) => ({
+  const options: YearProps[] = Array.from({ length: 65 }, (_, i) => ({
     value: (i + 1960).toString(),
     label: (i + 1960).toString(),
   }));

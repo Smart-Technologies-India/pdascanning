@@ -15,6 +15,7 @@ const QCProblemFile = async (
     const problemfile = await prisma.problem_file.findMany({
       where: {
         fromUserId: parseInt(payload.id),
+        NOT: [{ status: "COMPLETED" }],
       },
       include: {
         scanneruser: true,

@@ -5,16 +5,20 @@ import prisma from "../../../prisma/database";
 import { ApiResponseType } from "@/models/response";
 import { file } from "@prisma/client";
 
-interface GetFilePayload {
+interface GetMetaFilePayload {
   id: number;
 }
 
-const GetScannerFile = async (
-  payload: GetFilePayload
+const GetMetaFile = async (
+  payload: GetMetaFilePayload
 ): Promise<ApiResponseType<file[] | null>> => {
   try {
     const file = await prisma.file.findMany({
-      where: { assign: parseInt(payload.id.toString()), endAt: null },
+      where: {
+        village: null,
+        NOT: [{ endAt: null }],
+        OR: [{ meta: null }, { meta: payload.id }],
+      },
       include: {
         user: true,
         village: true,
@@ -28,25 +32,25 @@ const GetScannerFile = async (
       return {
         status: false,
         data: null,
-        message: "Invalid file id. Please try again.",
-        functionname: "GetScannerFile",
+        message: "No files found. Please try again.",
+        functionname: "GetMetaFile",
       };
 
     return {
       status: true,
       data: file,
       message: "File data get successfully",
-      functionname: "GetScannerFile",
+      functionname: "GetMetaFile",
     };
   } catch (e) {
     const response: ApiResponseType<null> = {
       status: false,
       data: null,
       message: errorToString(e),
-      functionname: "GetScannerFile",
+      functionname: "GetMetaFile",
     };
     return response;
   }
 };
 
-export default GetScannerFile;
+export default GetMetaFile;
