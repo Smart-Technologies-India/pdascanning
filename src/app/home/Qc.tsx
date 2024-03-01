@@ -7,24 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import { file, file_type, problem_file, user } from "@prisma/client";
+import { file, user } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-import { default as MulSelect } from "react-select";
 import { capitalcase } from "@/utils/methods";
-import GetScanners from "@/actions/user/getscanner";
 import { ApiResponseType } from "@/models/response";
 import fileSearch from "@/actions/file/searchfile";
 import {
@@ -45,8 +33,6 @@ const Qc = (props: QcProps) => {
   const router = useRouter();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [userdata, setUserData] = useState<user | null>(null);
-  // const [assigns, setAssigns] = useState<user[]>([]);
-  // const [fileTypes, setFileTypes] = useState<file_type[]>([]);
 
   const [isSearch, setSearch] = useState<boolean>(false);
   const [searchData, setSearchData] = useState<file[] | null>(null);
@@ -82,6 +68,7 @@ const Qc = (props: QcProps) => {
     if (scannedfile.status) {
       setScanned(scannedfile.data);
     }
+    console.log(scannedfile);
 
     setLoading(false);
   };
@@ -141,7 +128,9 @@ const Qc = (props: QcProps) => {
     <div className="min-h-screen p-2 mx-auto w-5/6">
       <Card>
         <CardHeader className="py-2 px-4 flex flex-row items-center">
-          <h1 className="text-xl">{userdata?.username}</h1>
+          <h1 className="text-xl">
+            {userdata?.username}-{userdata?.role}
+          </h1>
           <p className="text-2xl grow text-center">PDA Scanning</p>
           <Button onClick={logoutbtn}>Logout</Button>
         </CardHeader>
@@ -248,8 +237,10 @@ const Qc = (props: QcProps) => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">File Id</TableHead>
+                  <TableHead>File No</TableHead>
                   <TableHead>Year</TableHead>
                   <TableHead>File Type</TableHead>
+                  <TableHead>Scanner</TableHead>
                   <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -258,9 +249,13 @@ const Qc = (props: QcProps) => {
                   if (val.endAt == null) return null;
                   return (
                     <TableRow key={val.id}>
-                      <TableCell className="font-medium">{val.id}</TableCell>
+                      <TableCell className="font-medium">
+                        {val.file_id}
+                      </TableCell>
+                      <TableCell>{val.file_no}</TableCell>
                       <TableCell>{val.year}</TableCell>
                       <TableCell>{val.type.name}</TableCell>
+                      <TableCell>{val.assignTo.username}</TableCell>
                       <TableCell>
                         <Button
                           onClick={() => router.push(`/viewfile/${val.id}`)}
@@ -342,6 +337,7 @@ const Qc = (props: QcProps) => {
                   <TableHead>File No</TableHead>
                   <TableHead>Year</TableHead>
                   <TableHead>File Type</TableHead>
+                  <TableHead>Scanner</TableHead>
                   <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -354,9 +350,9 @@ const Qc = (props: QcProps) => {
                         {val.file_id}
                       </TableCell>
                       <TableCell>{val.file_no}</TableCell>
-
                       <TableCell>{val.year}</TableCell>
                       <TableCell>{val.type.name}</TableCell>
+                      <TableCell>{val.assignTo.username}</TableCell>
                       <TableCell>
                         <Button
                           onClick={() => router.push(`/viewfile/${val.id}`)}

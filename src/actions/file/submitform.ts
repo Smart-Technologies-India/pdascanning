@@ -36,7 +36,7 @@ const fileSubmit = async (
         functionname: "fileSubmit",
       };
 
-    const fileid = 124567 + file.id;
+    const fileid = 500000 + file.id;
 
     await prisma.file.update({
       where: {

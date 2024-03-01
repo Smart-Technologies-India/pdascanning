@@ -20,12 +20,14 @@ const GetQcFile = async (
         OR: [{ qc: null }, { qc: payload.id }],
       },
       include: {
+        assignTo: true,
         user: true,
         village: true,
         type: true,
         file_name: true,
         file_survey: true,
       },
+      orderBy: { file_id: "asc" },
     });
 
     if (!file)

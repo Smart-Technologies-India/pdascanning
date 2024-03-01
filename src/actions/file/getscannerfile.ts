@@ -22,6 +22,7 @@ const GetScannerFile = async (
         file_name: true,
         file_survey: true,
       },
+      orderBy: { file_id: "asc" },
     });
 
     if (!file)

@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import updateStatus from "@/actions/problemfile/updatestatus";
+import Link from "next/link";
 
 interface ViewFileProps {
   id: number;
@@ -136,16 +137,28 @@ const ViewFile = (props: ViewFileProps) => {
               className="text-2xl cursor-pointer"
               onClick={() => router.back()}
             />
-            <h1 className="text-xl">{userdata?.username}</h1>
+            <h1 className="text-xl">
+              {userdata?.username}-{userdata.role}
+            </h1>
             <p className="text-2xl grow text-center">PDA Scanning</p>
             <Button onClick={logoutbtn}>Logout</Button>
           </CardHeader>
         </Card>
 
         <Card className=" h-full p-2 mt-4 px-6">
-          <h1 className="text-center text-2xl font-medium">
-            Search File Details
-          </h1>
+          <div className="flex">
+            <h1 className="text-center text-2xl font-medium">
+              Search File Details
+            </h1>
+            <div className="grow"></div>
+            <Link
+              className="text-white bg-black py-2 px-4 rounded-md"
+              target="_blank"
+              href={`/file/${filedata.file_id}`}
+            >
+              View File
+            </Link>
+          </div>
           <div className="flex gap-2 items-center mt-4">
             <label htmlFor="fileid" className="w-60">
               File Id :

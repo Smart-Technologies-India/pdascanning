@@ -21,13 +21,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Fa6SolidCircleMinus, Fa6SolidCirclePlus } from "@/components/icons";
+import {
+  Fa6SolidArrowLeftLong,
+  Fa6SolidCircleMinus,
+  Fa6SolidCirclePlus,
+} from "@/components/icons";
 import { capitalcase } from "@/utils/methods";
 import { safeParse } from "valibot";
 import { AddFileSchema } from "@/schemas/adddata";
 import { ApiResponseType } from "@/models/response";
 import AddFile from "@/actions/file/addfile";
 import updateFile from "@/actions/file/updatefile";
+import Link from "next/link";
 
 interface AddMetaDataProps {
   id: number;
@@ -166,13 +171,30 @@ const AddMetaData = (props: AddMetaDataProps) => {
     <div className="min-h-screen p-2 mx-auto w-5/6">
       <Card>
         <CardHeader className="py-2 px-4 flex flex-row items-center">
-          <h1 className="text-xl">{userdata?.username}</h1>
-          <p className="text-2xl grow text-center">Land Records</p>
+          <Fa6SolidArrowLeftLong
+            className="text-2xl cursor-pointer"
+            onClick={() => router.back()}
+          />
+          <div className="w-10"></div>
+          <h1 className="text-xl">
+            {userdata?.username}-{userdata?.role}
+          </h1>
+          <p className="text-2xl grow text-center">PDA Scanning</p>
           <Button onClick={logoutbtn}>Logout</Button>
         </CardHeader>
       </Card>
       <Card className=" h-full p-2 mt-4 px-6">
-        <h1 className="text-center text-2xl font-medium">File Details</h1>
+        <div className="flex">
+          <h1 className="text-center text-2xl font-medium">File Details</h1>
+          <div className="grow"></div>
+          <Link
+            className="text-white bg-black py-2 px-4 rounded-md"
+            target="_blank"
+            href={`/file/${filedata.file_id}`}
+          >
+            View File
+          </Link>
+        </div>
         <div className="flex gap-2 items-center mt-4">
           <label htmlFor="fileid" className="w-60">
             File Id :
@@ -234,10 +256,10 @@ const AddMetaData = (props: AddMetaDataProps) => {
         </div>
         <div className="flex gap-2 items-center  mt-4">
           <label htmlFor="applicant_name" className="w-60">
-            Page Number :
+            Page Count :
           </label>
           <Input
-            placeholder="Enter page number"
+            placeholder="Enter page count"
             id="page_number"
             name="page_number"
             ref={pagenumber}

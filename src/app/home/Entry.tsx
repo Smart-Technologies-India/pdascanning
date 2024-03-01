@@ -29,6 +29,15 @@ import { safeParse } from "valibot";
 import { FileSchema } from "@/schemas/file";
 import { ApiResponseType } from "@/models/response";
 import fileSubmit from "@/actions/file/submitform";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import GetEntryFile from "@/actions/file/getentryfile";
 
 interface EntryProps {
   id: any;
@@ -39,6 +48,8 @@ const EntryForm = (props: EntryProps) => {
   const [userdata, setUserData] = useState<user | null>(null);
   const [assigns, setAssigns] = useState<user[]>([]);
   const [fileTypes, setFileTypes] = useState<file_type[]>([]);
+
+  const [entry, setEntry] = useState<file[] | null>(null);
 
   const init = async () => {
     setLoading(true);
@@ -58,6 +69,12 @@ const EntryForm = (props: EntryProps) => {
     if (file_type_response.status) {
       setFileTypes(file_type_response.data!);
     }
+
+    const entryfile = await GetEntryFile({ id: parseInt(props.id) });
+    if (entryfile.status) {
+      setEntry(entryfile.data);
+    }
+
     setLoading(false);
   };
 
@@ -136,7 +153,9 @@ const EntryForm = (props: EntryProps) => {
     <div className="min-h-screen p-2 mx-auto w-5/6">
       <Card>
         <CardHeader className="py-2 px-4 flex flex-row items-center">
-          <h1 className="text-xl">{userdata?.username}</h1>
+          <h1 className="text-xl">
+            {userdata?.username}-{userdata!.role}
+          </h1>
           <p className="text-2xl grow text-center">PDA Scanning</p>
           <Button onClick={logoutbtn}>Logout</Button>
         </CardHeader>
@@ -221,6 +240,47 @@ const EntryForm = (props: EntryProps) => {
       <Button className="w-full mt-4" onClick={submit}>
         Submit
       </Button>
+
+      <Card className="mt-6">
+        <CardHeader className="py-2 px-4 flex flex-row items-center">
+          <h1 className="text-xl">Entry Completed</h1>
+          <div className="grow"></div>
+        </CardHeader>
+        {entry && entry.length > 0 ? (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">File Id</TableHead>
+                  <TableHead>File No.</TableHead>
+                  <TableHead>Year</TableHead>
+                  <TableHead>File Type</TableHead>
+                  <TableHead>Scanner</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {entry.map((val: any) => {
+                  return (
+                    <TableRow key={val.id}>
+                      <TableCell className="font-medium">
+                        {val.file_id}
+                      </TableCell>
+                      <TableCell>{val.file_no}</TableCell>
+                      <TableCell>{val.year}</TableCell>
+                      <TableCell>{val.type.name}</TableCell>
+                      <TableCell>{val.assignTo.username}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="h-32 flex items-center justify-center">
+            <p>No data found</p>
+          </div>
+        )}
+      </Card>
     </div>
   );
 };

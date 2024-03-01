@@ -56,6 +56,7 @@ const fileSearch = async (
       include: {
         village: true,
         type: true,
+        assignTo: true,
       },
     });
 

@@ -124,14 +124,16 @@ const Scanner = (props: ScannerProps) => {
     <div className="min-h-screen p-2 mx-auto w-5/6">
       <Card>
         <CardHeader className="py-2 px-4 flex flex-row items-center">
-          <h1 className="text-xl">{userdata?.username}</h1>
+          <h1 className="text-xl">
+            {userdata?.username}-{userdata!.role}
+          </h1>
           <p className="text-2xl grow text-center">PDA Scanning</p>
           <Button onClick={logoutbtn}>Logout</Button>
         </CardHeader>
       </Card>
       <Card className="mt-6">
         <CardHeader className="py-2 px-4 flex flex-row items-center">
-          <h1 className="text-xl">Search Result</h1>
+          <h1 className="text-xl">Assigned Result</h1>
           <div className="grow"></div>
           <p>Found: {searchData?.length}</p>
         </CardHeader>

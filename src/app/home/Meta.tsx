@@ -6,23 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import { file, file_type, problem_file, user } from "@prisma/client";
+import { file, user } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-import { default as MulSelect } from "react-select";
-import GetScanners from "@/actions/user/getscanner";
 import { ApiResponseType } from "@/models/response";
 import fileSearch from "@/actions/file/searchfile";
 import {
@@ -34,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import GetMetaFile from "@/actions/file/getmetafile";
+import { Fa6SolidArrowLeftLong } from "@/components/icons";
 
 interface MetaProps {
   id: any;
@@ -146,7 +135,9 @@ const MetaPage = (props: MetaProps) => {
     <div className="min-h-screen p-2 mx-auto w-5/6">
       <Card>
         <CardHeader className="py-2 px-4 flex flex-row items-center">
-          <h1 className="text-xl">{userdata?.username}</h1>
+          <h1 className="text-xl">
+            {userdata?.username}-{userdata?.role}
+          </h1>
           <p className="text-2xl grow text-center">PDA Scanning</p>
           <Button onClick={logoutbtn}>Logout</Button>
         </CardHeader>
@@ -158,7 +149,7 @@ const MetaPage = (props: MetaProps) => {
             File Id :
           </label>
           <Input
-            placeholder="Enter File No"
+            placeholder="Enter File Id"
             id="fileid"
             name="fileid"
             ref={file_id}
@@ -253,8 +244,10 @@ const MetaPage = (props: MetaProps) => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">File Id</TableHead>
+                  <TableHead>File No</TableHead>
                   <TableHead>Year</TableHead>
                   <TableHead>File Type</TableHead>
+                  <TableHead>Scanner</TableHead>
                   <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -266,8 +259,10 @@ const MetaPage = (props: MetaProps) => {
                       <TableCell className="font-medium">
                         {val.file_id}
                       </TableCell>
+                      <TableCell>{val.file_no}</TableCell>
                       <TableCell>{val.year}</TableCell>
                       <TableCell>{val.type.name}</TableCell>
+                      <TableCell>{val.assignTo.username}</TableCell>
                       <TableCell>
                         {val.village == null || val.village == undefined ? (
                           <Button
@@ -311,6 +306,7 @@ const MetaPage = (props: MetaProps) => {
                   <TableHead>File No.</TableHead>
                   <TableHead>Year</TableHead>
                   <TableHead>File Type</TableHead>
+                  <TableHead>Scanner</TableHead>
                   <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -325,6 +321,7 @@ const MetaPage = (props: MetaProps) => {
                       <TableCell>{val.file_no}</TableCell>
                       <TableCell>{val.year}</TableCell>
                       <TableCell>{val.type.name}</TableCell>
+                      <TableCell>{val.assignTo.username}</TableCell>
                       <TableCell>
                         <Button
                           onClick={() => router.push(`/home/adddata/${val.id}`)}
