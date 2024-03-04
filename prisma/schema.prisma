@@ -117,7 +117,7 @@ model file_survey {
   updatedAt     DateTime  @updatedAt
   deletedAt     DateTime?
 
-  @@unique([survey_number, villageId])
+  @@unique([survey_number, villageId, fileId])
 }
 
 enum ProblemStatus {
