@@ -159,6 +159,7 @@ export default function Admin() {
                   <SelectItem value={"SCANNER"}>SCANNER</SelectItem>
                   <SelectItem value={"QC"}>QC</SelectItem>
                   <SelectItem value={"META"}>META</SelectItem>
+                  <SelectItem value={"VERIFY"}>VERIFY</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

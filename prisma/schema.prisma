@@ -24,23 +24,26 @@ enum Role {
   SCANNER
   QC
   META
+  VERIFY
 }
 
 model user {
-  id           Int            @id @default(autoincrement())
-  username     String         @unique
-  password     String
-  role         Role           @default(NONE)
-  status       Status         @default(ACTIVE)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  deletedAt    DateTime?
-  users_files  file[]         @relation("users")
-  assign_files file[]         @relation("assign")
-  meta         file[]         @relation("meta")
-  qc           file[]         @relation("qc")
-  fromuser     problem_file[] @relation("fromuser")
-  scanneruser  problem_file[] @relation("scanneruser")
+  id                        Int             @id @default(autoincrement())
+  username                  String          @unique
+  password                  String
+  role                      Role            @default(NONE)
+  status                    Status          @default(ACTIVE)
+  createdAt                 DateTime        @default(now())
+  updatedAt                 DateTime        @updatedAt
+  deletedAt                 DateTime?
+  users_files               file[]          @relation("users")
+  assign_files              file[]          @relation("assign")
+  meta                      file[]          @relation("meta")
+  qc                        file[]          @relation("qc")
+  fromuser                  problem_file[]  @relation("fromuser")
+  scanneruser               problem_file[]  @relation("scanneruser")
+  fromuser_problem_pages    problem_pages[] @relation("fromuser_problem_pages")
+  scanneruser_problem_pages problem_pages[] @relation("scanneruser_problem_pages")
 }
 
 model village {
@@ -63,37 +66,38 @@ model file_type {
 }
 
 model file {
-  id             Int            @id @default(autoincrement())
-  file_id        String?        @unique
+  id             Int             @id @default(autoincrement())
+  file_id        String?         @unique
   file_no        String?
   applicant_name String?
   survey_number  String?
   year           Int?
   aadhar         String?
   remarks        String?
-  type           file_type?     @relation(fields: [typeId], references: [id])
+  type           file_type?      @relation(fields: [typeId], references: [id])
   typeId         Int?
-  village        village?       @relation(fields: [villageId], references: [id])
+  village        village?        @relation(fields: [villageId], references: [id])
   villageId      Int?
   file_location  String?
-  user           user           @relation("users", fields: [userId], references: [id])
+  user           user            @relation("users", fields: [userId], references: [id])
   userId         Int
-  assignTo       user?          @relation("assign", fields: [assign], references: [id])
+  assignTo       user?           @relation("assign", fields: [assign], references: [id])
   assign         Int?
-  metaId         user?          @relation("meta", fields: [meta], references: [id])
+  metaId         user?           @relation("meta", fields: [meta], references: [id])
   meta           Int?
-  qcId           user?          @relation("qc", fields: [qc], references: [id])
+  qcId           user?           @relation("qc", fields: [qc], references: [id])
   qc             Int?
   pagecount      Int?
   startAt        DateTime?
   endAt          DateTime?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
   deletedAt      DateTime?
   verifiedAt     DateTime?
   file_name      file_name[]
   file_survey    file_survey[]
   problem_file   problem_file[]
+  problem_pages  problem_pages[]
 }
 
 model file_name {
@@ -140,4 +144,27 @@ model problem_file {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   deletedAt     DateTime?
+}
+
+model problem_pages {
+  id             Int           @id @default(autoincrement())
+  file           file          @relation(fields: [fileId], references: [id])
+  fileId         Int
+  pages          String?
+  map_count      Int?
+  page_count     Int
+  wrong_file_id  Boolean
+  file_not_found Boolean
+  full_rescan    Boolean
+  filter         Boolean
+  crop           Boolean
+  meta_improper  Boolean
+  fromuser       user          @relation("fromuser_problem_pages", fields: [fromUserId], references: [id])
+  fromUserId     Int
+  scanneruser    user          @relation("scanneruser_problem_pages", fields: [scannerUserId], references: [id])
+  scannerUserId  Int
+  status         ProblemStatus @default(PENDING)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
 }
