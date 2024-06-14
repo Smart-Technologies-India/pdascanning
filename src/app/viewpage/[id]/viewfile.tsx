@@ -68,7 +68,6 @@ const ViewFile = (props: ViewFileProps) => {
     if (problempageresponse.status) {
       setProblemPage((val: any) => problempageresponse.data);
 
-      console.log(problempageresponse.data);
       if (problempageresponse.data?.status != "COMPLETED") {
         setTimeout(() => {
           pagesRef.current!.value = problempageresponse.data?.pages ?? "";
@@ -128,7 +127,7 @@ const ViewFile = (props: ViewFileProps) => {
 
   const addproblem = async () => {
     const response = await ProblemPage({
-      pages: pagecountRef.current?.value! ?? "",
+      pages: pagesRef.current?.value! ?? "",
       fileid: props.fileid.toString(),
       fromUserId: props.id,
       toUserId: filedata.assignTo.id,

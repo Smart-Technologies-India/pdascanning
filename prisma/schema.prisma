@@ -150,7 +150,7 @@ model problem_pages {
   id             Int           @id @default(autoincrement())
   file           file          @relation(fields: [fileId], references: [id])
   fileId         Int
-  pages          String?
+  pages          String?       @db.MediumText
   map_count      Int?
   page_count     Int
   wrong_file_id  Boolean
