@@ -24,6 +24,8 @@ interface UpdateFilePayload {
   endAt?: string;
   meta?: number;
   qc?: number;
+  names?: string[];
+  surveyNumbers?: string[];
 }
 
 const updateFile = async (
@@ -51,11 +53,29 @@ const updateFile = async (
     if (payload.endAt) data_to_update.endAt = new Date(payload.endAt);
     if (payload.meta) data_to_update.meta = payload.meta;
     if (payload.qc) data_to_update.qc = payload.qc;
-    
+
     const updatefile = await prisma.file.update({
       where: { id: parseInt(payload.id.toString()) },
       data: data_to_update,
     });
+
+    if (payload.names) {
+      await prisma.file_name.createMany({
+        data: payload.names.map((name) => ({
+          fileId: updatefile.id,
+          name,
+        })),
+      });
+    }
+    if (payload.surveyNumbers) {
+      await prisma.file_survey.createMany({
+        data: payload.surveyNumbers.map((surveyNumber) => ({
+          fileId: updatefile.id,
+          survey_number: surveyNumber,
+          villageId: updatefile.villageId!,
+        })),
+      });
+    }
 
     if (!updatefile)
       return {

@@ -248,7 +248,7 @@ const MetaPage = (props: MetaProps) => {
                   <TableHead>Year</TableHead>
                   <TableHead>File Type</TableHead>
                   <TableHead>Scanner</TableHead>
-                  <TableHead>Action</TableHead>
+                  <TableHead className="w-96">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -263,7 +263,7 @@ const MetaPage = (props: MetaProps) => {
                       <TableCell>{val.year}</TableCell>
                       <TableCell>{val.type.name}</TableCell>
                       <TableCell>{val.assignTo.username}</TableCell>
-                      <TableCell>
+                      <TableCell className="flex">
                         {val.village == null || val.village == undefined ? (
                           <Button
                             onClick={() =>
@@ -273,11 +273,19 @@ const MetaPage = (props: MetaProps) => {
                             Add
                           </Button>
                         ) : (
-                          <Button
-                            onClick={() => router.push(`/viewfile/${val.id}`)}
-                          >
-                            View
-                          </Button>
+                          <>
+                            <Button
+                              onClick={() => router.push(`/viewfile/${val.id}`)}
+                            >
+                              View
+                            </Button>
+                            <div className="w-4"></div>
+                            <Button
+                              onClick={() => router.push(`/editfile/${val.id}`)}
+                            >
+                              Edit
+                            </Button>
+                          </>
                         )}
                       </TableCell>
                     </TableRow>
