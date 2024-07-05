@@ -32,6 +32,18 @@ const updateFile = async (
   payload: UpdateFilePayload
 ): Promise<ApiResponseType<file | null>> => {
   try {
+    const isexist = await prisma.file.findFirst({
+      where: { id: parseInt(payload.id.toString()) },
+    });
+
+    if (!isexist) {
+      return {
+        status: false,
+        data: null,
+        message: "Invalid id. Please try again.",
+        functionname: "updateFile",
+      };
+    }
     const data_to_update: any = {};
 
     if (payload.file_id) data_to_update.file_id = payload.file_id;

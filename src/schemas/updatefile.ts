@@ -13,7 +13,7 @@ import {
 const UpdateFileSchema = object(
   {
     file_no: string([minLength(1, "Please enter file no.")]),
-    remark: string([minLength(1, "Please enter remark.")]),
+    // remark: string([minLength(1, "Please enter remark.")]),
     applicant_name: string([minLength(1, "Please enter applicant name.")]),
     survey_number: string([
       minLength(1, "Please enter your file survey number."),

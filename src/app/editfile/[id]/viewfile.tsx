@@ -121,7 +121,7 @@ const ViewFile = (props: ViewFileProps) => {
         villageId: result.output.villageId,
         applicant_name: result.output.applicant_name,
         survey_number: result.output.survey_number,
-        remarks: result.output.remark,
+        ...(remarksRef.current!.value && { remark: remarksRef.current!.value }),
       });
 
       if (updateresponse.status) {
@@ -256,19 +256,17 @@ const ViewFile = (props: ViewFileProps) => {
             </div>
           )}
 
-          {filedata.remarks && (
-            <div className="flex gap-2 items-start  mt-4">
-              <label htmlFor="remark" className="w-60">
-                Remarks :
-              </label>
-              <Input
-                placeholder="Enter remark ref"
-                id="remark"
-                name="remark"
-                ref={remarksRef}
-              />
-            </div>
-          )}
+          <div className="flex gap-2 items-start  mt-4">
+            <label htmlFor="remark" className="w-60">
+              Remarks :
+            </label>
+            <Input
+              placeholder="Enter remark ref"
+              id="remark"
+              name="remark"
+              ref={remarksRef}
+            />
+          </div>
         </Card>
 
         {userdata.role == "ENTRY" || userdata.role == "SCANNER" ? (
