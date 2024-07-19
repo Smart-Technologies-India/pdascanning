@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import GetMetaFile from "@/actions/file/getmetafile";
-import { Fa6SolidArrowLeftLong } from "@/components/icons";
+import GetMetaFileCount from "@/actions/file/getmetafilecount";
 
 interface MetaProps {
   id: any;
@@ -35,9 +35,10 @@ const MetaPage = (props: MetaProps) => {
   // const [fileTypes, setFileTypes] = useState<file_type[]>([]);
 
   const [isSearch, setSearch] = useState<boolean>(false);
-  const [searchData, setSearchData] = useState<file[] | null>(null);
+  const [searchData, setSearchData] = useState<file[]>([]);
 
-  const [scanned, setScanned] = useState<file[] | null>(null);
+  const [scanned, setScanned] = useState<file[]>([]);
+  const [metaFileData, setMetaFileData] = useState<file[]>([]);
 
   const init = async () => {
     setLoading(true);
@@ -60,7 +61,14 @@ const MetaPage = (props: MetaProps) => {
 
     const scannedfile = await GetMetaFile({ id: parseInt(props.id) });
     if (scannedfile.status) {
-      setScanned(scannedfile.data);
+      setScanned(scannedfile.data ?? []);
+    }
+
+    const meta_file_response = await GetMetaFileCount({
+      id: parseInt(props.id),
+    });
+    if (meta_file_response.status) {
+      setMetaFileData(meta_file_response.data ?? []);
     }
 
     setLoading(false);
@@ -92,12 +100,12 @@ const MetaPage = (props: MetaProps) => {
           setSearch(true);
           toast.success("File search completed");
         } else {
-          setSearchData(null);
+          setSearchData(null ?? []);
           setSearch(false);
           toast.error("No data found");
         }
       } else {
-        setSearchData(null);
+        setSearchData(null ?? []);
         setSearch(false);
         toast.error("No data found");
       }
@@ -124,6 +132,69 @@ const MetaPage = (props: MetaProps) => {
   //   label: (i + 1960).toString(),
   // }));
 
+  const getFileCount = (): number => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const currentDay = currentDate.getDate();
+
+    const filteredData = metaFileData.filter((val: file) => {
+      const metaAt = new Date(val.metaAt!);
+      return (
+        metaAt.getFullYear() === currentYear &&
+        metaAt.getMonth() === currentMonth &&
+        metaAt.getDate() === currentDay
+      );
+    });
+
+    return filteredData.length;
+  };
+
+  const getPageCount = (): number => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const currentDay = currentDate.getDate();
+
+    const filteredData = metaFileData.filter((val: file) => {
+      const metaAt = new Date(val.metaAt!);
+      return (
+        metaAt.getFullYear() === currentYear &&
+        metaAt.getMonth() === currentMonth &&
+        metaAt.getDate() === currentDay
+      );
+    });
+
+    let count = 0;
+    for (let i = 0; i < filteredData.length; i++) {
+      count += filteredData[i].pagecount ?? 0;
+    }
+
+    return count;
+  };
+  const getMapCount = (): number => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const currentDay = currentDate.getDate();
+
+    const filteredData = metaFileData.filter((val: file) => {
+      const metaAt = new Date(val.metaAt!);
+      return (
+        metaAt.getFullYear() === currentYear &&
+        metaAt.getMonth() === currentMonth &&
+        metaAt.getDate() === currentDay
+      );
+    });
+
+    let count = 0;
+    for (let i = 0; i < filteredData.length; i++) {
+      count += filteredData[i].mapcount ?? 0;
+    }
+
+    return count;
+  };
+
   if (isLoading)
     return (
       <div className="h-screen w-full grid place-items-center text-3xl text-gray-600 bg-gray-200">
@@ -141,6 +212,31 @@ const MetaPage = (props: MetaProps) => {
           <p className="text-2xl grow text-center">PDA Scanning</p>
           <Button onClick={logoutbtn}>Logout</Button>
         </CardHeader>
+      </Card>
+
+      <Card className="mt-4 px-4 py-2">
+        <div className="flex items-center">
+          <h1 className="text-xl">Scanner File Status</h1>
+          <div className="grow"></div>
+        </div>
+        <div className="grid gap-4 grid-cols-4 mt-2">
+          <Card className="h-full p-2 px-4">
+            <h1>Pending File Count</h1>
+            <p className="text-2xl">{scanned.length}</p>
+          </Card>
+          <Card className="h-full p-2 px-4">
+            <h1>Today File Count</h1>
+            <p className="text-2xl">{getFileCount()}</p>
+          </Card>
+          <Card className="h-full p-2 px-4">
+            <h1>Today Page Count</h1>
+            <p className="text-2xl">{getPageCount()}</p>
+          </Card>
+          <Card className="h-full p-2 px-4">
+            <h1>Today Map Count</h1>
+            <p className="text-2xl">{getMapCount()}</p>
+          </Card>
+        </div>
       </Card>
       <Card className=" h-full p-2 mt-4 px-6">
         <h1 className="text-center text-2xl font-medium">File Details</h1>

@@ -14,8 +14,8 @@ interface AddFilePayload {
   villageId: number;
   names: string[];
   surveyNumbers: string[];
-  page: number;
   meta: number;
+  location: number;
 }
 
 const AddFile = async (
@@ -39,7 +39,7 @@ const AddFile = async (
       survey_number: payload.survey_number,
       villageId: payload.villageId,
       meta: payload.meta,
-      pagecount: payload.page,
+      physicalFileLocationId: payload.location,
     };
 
     if (payload.aadhar) {
@@ -52,7 +52,7 @@ const AddFile = async (
 
     const file_update_response = await prisma.file.update({
       where: { id: parseInt(payload.id.toString()) },
-      data: data_to_update,
+      data: { metaAt: new Date(), ...data_to_update },
     });
 
     if (!file_update_response)

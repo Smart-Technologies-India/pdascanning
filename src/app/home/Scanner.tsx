@@ -9,10 +9,10 @@ import { Input } from "@/components/ui/input";
 
 import { file, user } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-import { capitalcase } from "@/utils/methods";
+import { capitalcase, handleNumberChange } from "@/utils/methods";
 
 import {
   Table,
@@ -26,6 +26,13 @@ import GetScannerFile from "@/actions/file/getscannerfile";
 import updateFile from "@/actions/file/updatefile";
 import UserProblemFile from "@/actions/problemfile/userproblem";
 import updateStatus from "@/actions/problemfile/updatestatus";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import GetScannerFileCount from "@/actions/file/getscannerfilecount";
 
 interface ScannerProps {
   id: any;
@@ -34,9 +41,13 @@ const Scanner = (props: ScannerProps) => {
   const router = useRouter();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [userdata, setUserData] = useState<user | null>(null);
-  const [searchData, setSearchData] = useState<file[] | null>(null);
+  const [searchData, setSearchData] = useState<file[]>([]);
+  const [scannerFileData, setScannerFileData] = useState<file[]>([]);
 
-  const [problemFile, setProblemFile] = useState<any[] | null>(null);
+  const [problemFile, setProblemFile] = useState<any[]>([]);
+
+  const pageCountRef = useRef<HTMLInputElement>(null);
+  const mapCountRef = useRef<HTMLInputElement>(null);
 
   const init = async () => {
     setLoading(true);
@@ -49,7 +60,14 @@ const Scanner = (props: ScannerProps) => {
 
     const scanner_response = await GetScannerFile({ id: parseInt(props.id) });
     if (scanner_response.status) {
-      setSearchData(scanner_response.data!);
+      setSearchData(scanner_response.data ?? []);
+    }
+
+    const scanner_file_response = await GetScannerFileCount({
+      id: parseInt(props.id),
+    });
+    if (scanner_file_response.status) {
+      setScannerFileData(scanner_file_response.data ?? []);
     }
 
     const probfile: any = await UserProblemFile({ id: props.id });
@@ -102,15 +120,94 @@ const Scanner = (props: ScannerProps) => {
   };
 
   const updateEnd = async (id: number) => {
+    if (
+      pageCountRef.current?.value == null ||
+      pageCountRef.current?.value == undefined ||
+      pageCountRef.current?.value == ""
+    ) {
+      return toast.error("Enter Page count");
+    }
+    if (
+      mapCountRef.current?.value == null ||
+      mapCountRef.current?.value == undefined ||
+      mapCountRef.current?.value == ""
+    ) {
+      return toast.error("Enter Map count");
+    }
     const response = await updateFile({
       id: id,
       endAt: new Date().toISOString(),
+      pagecount: parseInt(pageCountRef.current?.value),
+      mapcount: parseInt(mapCountRef.current?.value),
     });
     if (response.status) {
       init();
     } else {
       toast.error(response.message);
     }
+  };
+
+  const getFileCount = (): number => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const currentDay = currentDate.getDate();
+
+    const filteredData = scannerFileData.filter((val: file) => {
+      const endDate = new Date(val.endAt!);
+      return (
+        endDate.getFullYear() === currentYear &&
+        endDate.getMonth() === currentMonth &&
+        endDate.getDate() === currentDay
+      );
+    });
+
+    return filteredData.length;
+  };
+
+  const getPageCount = (): number => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const currentDay = currentDate.getDate();
+
+    const filteredData = scannerFileData.filter((val: file) => {
+      const endDate = new Date(val.endAt!);
+      return (
+        endDate.getFullYear() === currentYear &&
+        endDate.getMonth() === currentMonth &&
+        endDate.getDate() === currentDay
+      );
+    });
+
+    let count = 0;
+    for (let i = 0; i < filteredData.length; i++) {
+      count += filteredData[i].pagecount ?? 0;
+    }
+
+    return count;
+  };
+  const getMapCount = (): number => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const currentDay = currentDate.getDate();
+
+    const filteredData = scannerFileData.filter((val: file) => {
+      const endDate = new Date(val.endAt!);
+      return (
+        endDate.getFullYear() === currentYear &&
+        endDate.getMonth() === currentMonth &&
+        endDate.getDate() === currentDay
+      );
+    });
+
+    let count = 0;
+    for (let i = 0; i < filteredData.length; i++) {
+      count += filteredData[i].mapcount ?? 0;
+    }
+
+    return count;
   };
 
   if (isLoading)
@@ -130,6 +227,30 @@ const Scanner = (props: ScannerProps) => {
           <p className="text-2xl grow text-center">PDA Scanning</p>
           <Button onClick={logoutbtn}>Logout</Button>
         </CardHeader>
+      </Card>
+      <Card className="mt-4 px-4 py-2">
+        <div className="flex items-center">
+          <h1 className="text-xl">Scanner File Status</h1>
+          <div className="grow"></div>
+        </div>
+        <div className="grid gap-4 grid-cols-4 mt-2">
+          <Card className="h-full p-2 px-4">
+            <h1>Pending File Count</h1>
+            <p className="text-2xl">{searchData.length}</p>
+          </Card>
+          <Card className="h-full p-2 px-4">
+            <h1>Today File Count</h1>
+            <p className="text-2xl">{getFileCount()}</p>
+          </Card>
+          <Card className="h-full p-2 px-4">
+            <h1>Today Page Count</h1>
+            <p className="text-2xl">{getPageCount()}</p>
+          </Card>
+          <Card className="h-full p-2 px-4">
+            <h1>Today Map Count</h1>
+            <p className="text-2xl">{getMapCount()}</p>
+          </Card>
+        </div>
       </Card>
       <Card className="mt-6">
         <CardHeader className="py-2 px-4 flex flex-row items-center">
@@ -153,7 +274,14 @@ const Scanner = (props: ScannerProps) => {
               </TableHeader>
               <TableBody>
                 {searchData.map((val: any) => (
-                  <TableRow key={val.id}>
+                  <TableRow
+                    key={val.id}
+                    className={
+                      val.startAt != null && val.endAt == null
+                        ? "bg-red-400 hover:bg-red-400 bg-opacity-30 hover:bg-opacity-40"
+                        : ""
+                    }
+                  >
                     <TableCell className="font-medium">{val.file_id}</TableCell>
                     <TableCell className="font-medium">{val.file_no}</TableCell>
                     <TableCell>{val.year}</TableCell>
@@ -169,14 +297,54 @@ const Scanner = (props: ScannerProps) => {
                     </TableCell>
                     <TableCell>
                       {val.endAt == null ? (
-                        <Button
-                          onClick={() => updateEnd(val.id)}
-                          disabled={
-                            val.startAt == null || val.startAt == undefined
-                          }
-                        >
-                          End Timer
-                        </Button>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              disabled={
+                                val.startAt == null || val.startAt == undefined
+                              }
+                            >
+                              End Timer
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80">
+                            <div className="grid gap-4">
+                              <div className="space-y-2">
+                                <h4 className="font-medium leading-none">
+                                  Add End Time
+                                </h4>
+                                <p className="text-sm text-muted-foreground">
+                                  Add data and processed
+                                </p>
+                              </div>
+                              <div className="grid gap-2">
+                                <div className="grid grid-cols-3 items-center gap-4">
+                                  <Label htmlFor="page">Page Count</Label>
+                                  <Input
+                                    ref={pageCountRef}
+                                    id="page"
+                                    name="page"
+                                    className="col-span-2 h-8"
+                                    onChange={handleNumberChange}
+                                  />
+                                </div>
+                                <div className="grid grid-cols-3 items-center gap-4">
+                                  <Label htmlFor="map">Map Count</Label>
+                                  <Input
+                                    id="map"
+                                    className="col-span-2 h-8"
+                                    name="page"
+                                    ref={mapCountRef}
+                                    onChange={handleNumberChange}
+                                  />
+                                </div>
+                                <Button onClick={() => updateEnd(val.id)}>
+                                  Submit
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       ) : (
                         new Date(val.endAt).toLocaleString()
                       )}

@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { file, file_type, user } from "@prisma/client";
+import { file, file_type, FileStatus, Status, user } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -49,7 +49,7 @@ const EntryForm = (props: EntryProps) => {
   const [assigns, setAssigns] = useState<user[]>([]);
   const [fileTypes, setFileTypes] = useState<file_type[]>([]);
 
-  const [entry, setEntry] = useState<file[] | null>(null);
+  const [entry, setEntry] = useState<file[]>([]);
 
   const init = async () => {
     setLoading(true);
@@ -72,8 +72,9 @@ const EntryForm = (props: EntryProps) => {
 
     const entryfile = await GetEntryFile({ id: parseInt(props.id) });
     if (entryfile.status) {
-      setEntry(entryfile.data);
+      setEntry(entryfile.data ?? []);
     }
+
 
     setLoading(false);
   };
@@ -86,12 +87,13 @@ const EntryForm = (props: EntryProps) => {
 
   const [fileType, setFileType] = useState<number>(0);
   const [assign, setAssign] = useState<number>(0);
+  const [filter, setFilter] = useState<number>(0);
 
   const file_no = useRef<HTMLInputElement>(null);
 
   const submit = async () => {
     const result = safeParse(FileSchema, {
-      file_no: file_no.current!.value,
+      file_no: file_no.current!.value.trim(),
       year: parseInt(year),
       typeId: fileType,
       assignTo: assign,
@@ -142,6 +144,13 @@ const EntryForm = (props: EntryProps) => {
     label: (i + 1960).toString(),
   }));
 
+  const getEntryFileCount = (id: number): number => {
+    const resultvalue = entry?.filter(
+      (value: file) => value.assign == id && value.startAt == null
+    );
+    return resultvalue.length;
+  };
+
   if (isLoading)
     return (
       <div className="h-screen w-full grid place-items-center text-3xl text-gray-600 bg-gray-200">
@@ -159,6 +168,21 @@ const EntryForm = (props: EntryProps) => {
           <p className="text-2xl grow text-center">PDA Scanning</p>
           <Button onClick={logoutbtn}>Logout</Button>
         </CardHeader>
+      </Card>
+      <Card className="mt-4 px-4 py-2">
+        <div className="flex items-center">
+          <h1 className="text-xl">Scanner File Status</h1>
+          <div className="grow"></div>
+          <h1>Total Count: {entry.length}</h1>
+        </div>
+        <div className="grid gap-4 grid-cols-4 mt-2">
+          {assigns.map((val: user) => (
+            <Card key={val.id} className="h-full p-2 px-4">
+              <h1>{val.username}</h1>
+              <p className="text-2xl">{getEntryFileCount(val.id)}</p>
+            </Card>
+          ))}
+        </div>
       </Card>
       <Card className=" h-full p-2 mt-4 px-6">
         <h1 className="text-center text-2xl font-medium">File Details</h1>
@@ -242,9 +266,35 @@ const EntryForm = (props: EntryProps) => {
       </Button>
 
       <Card className="mt-6">
-        <CardHeader className="py-2 px-4 flex flex-row items-center">
+        <CardHeader className="py-2 px-4 flex flex-row items-center gap-4">
           <h1 className="text-xl">Entry Completed</h1>
           <div className="grow"></div>
+          <div className="w-48">
+            <Select
+              onValueChange={(val) => {
+                setFilter(parseInt(val));
+              }}
+            >
+              <SelectTrigger className="">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Scanners</SelectLabel>
+                  {assigns.map((val: user) => (
+                    <SelectItem key={val.id} value={val.id.toString()}>
+                      {val.username}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          {filter != 0 && (
+            <Button className="" onClick={() => setFilter(0)}>
+              Clear Filter
+            </Button>
+          )}
         </CardHeader>
         {entry && entry.length > 0 ? (
           <div className="overflow-x-auto">
@@ -260,17 +310,32 @@ const EntryForm = (props: EntryProps) => {
               </TableHeader>
               <TableBody>
                 {entry.map((val: any) => {
-                  return (
-                    <TableRow key={val.id}>
-                      <TableCell className="font-medium">
-                        {val.file_id}
-                      </TableCell>
-                      <TableCell>{val.file_no}</TableCell>
-                      <TableCell>{val.year}</TableCell>
-                      <TableCell>{val.type.name}</TableCell>
-                      <TableCell>{val.assignTo.username}</TableCell>
-                    </TableRow>
-                  );
+                  if (filter == 0) {
+                    return (
+                      <TableRow key={val.id}>
+                        <TableCell className="font-medium">
+                          {val.file_id}
+                        </TableCell>
+                        <TableCell>{val.file_no}</TableCell>
+                        <TableCell>{val.year}</TableCell>
+                        <TableCell>{val.type.name}</TableCell>
+                        <TableCell>{val.assignTo.username}</TableCell>
+                      </TableRow>
+                    );
+                  } else {
+                    if (filter != val.assign) return;
+                    return (
+                      <TableRow key={val.id}>
+                        <TableCell className="font-medium">
+                          {val.file_id}
+                        </TableCell>
+                        <TableCell>{val.file_no}</TableCell>
+                        <TableCell>{val.year}</TableCell>
+                        <TableCell>{val.type.name}</TableCell>
+                        <TableCell>{val.assignTo.username}</TableCell>
+                      </TableRow>
+                    );
+                  }
                 })}
               </TableBody>
             </Table>

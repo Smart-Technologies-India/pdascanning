@@ -65,7 +65,6 @@ const Verify = (props: VerifyProps) => {
       file_id: file_id.current!.value,
     });
 
-    console.log(filesearch);
     if (filesearch.status) {
       setSearchData(filesearch.data);
       setSearch(true);

@@ -65,13 +65,20 @@ const ViewFile = (props: ViewFileProps) => {
     const response: any = await GetFile({ id: props.fileid });
     if (response.status) {
       setFileData((val: any) => response.data);
-      setVillage(response.data!.village.id.toString());
+
+      if (response.data!.village) {
+        setVillage(response.data!.village.id.toString());
+      }
 
       setTimeout(() => {
         filenumberRef.current!.value = response.data!.file_no;
-        aplicantRef.current!.value = response.data!.applicant_name;
-        surveyRef.current!.value = response.data!.survey_number;
-        remarksRef.current!.value = response.data!.remarks;
+
+        if (aplicantRef.current)
+          aplicantRef.current!.value = response.data!.applicant_name;
+        if (surveyRef.current)
+          surveyRef.current!.value = response.data!.survey_number;
+        if (remarksRef.current)
+          remarksRef.current!.value = response.data!.remarks;
       }, 2000);
     } else {
       toast.error(response.message);
