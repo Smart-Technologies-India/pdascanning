@@ -255,11 +255,19 @@ const Qc = (props: QcProps) => {
                       <TableCell>{val.year}</TableCell>
                       <TableCell>{val.type.name}</TableCell>
                       <TableCell>{val.assignTo.username}</TableCell>
-                      <TableCell>
+
+                      <TableCell className="flex">
                         <Button
                           onClick={() => router.push(`/viewfile/${val.id}`)}
                         >
                           View
+                        </Button>
+                        <div className="w-4"></div>
+
+                        <Button
+                          onClick={() => router.push(`/editfile/${val.id}`)}
+                        >
+                          Edit
                         </Button>
                       </TableCell>
                     </TableRow>

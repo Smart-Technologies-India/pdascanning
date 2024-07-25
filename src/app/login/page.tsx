@@ -31,7 +31,7 @@ export default function LoginPage() {
     });
 
     if (result.success) {
-      const registerrespone: ApiResponseType<user | null> = await login({
+      const registerrespone = await login({
         password: result.output.password,
         username: result.output.username,
       });
