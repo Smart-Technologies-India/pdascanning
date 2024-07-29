@@ -128,11 +128,11 @@ export default function SystemPage(props: AdminProps) {
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={async (e: Date) => {
+                  onSelect={(e: Date) => {
                     if (!e) return;
                     setDate(e);
                     setDateBox(false);
-                    await datesearch(e.toISOString());
+                    datesearch(e.toISOString());
                   }}
                   initialFocus
                 />
