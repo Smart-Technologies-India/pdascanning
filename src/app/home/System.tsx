@@ -128,7 +128,7 @@ export default function SystemPage(props: AdminProps) {
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={(e: Date) => {
+                  onSelect={(e: any) => {
                     if (!e) return;
                     setDate(e);
                     setDateBox(false);
