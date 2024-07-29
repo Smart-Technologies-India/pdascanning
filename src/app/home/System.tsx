@@ -39,7 +39,7 @@ export default function SystemPage(props: AdminProps) {
 
   const router = useRouter();
 
-  const [date, setDate] = useState<Date | null>(null);
+  const [date, setDate] = useState<Date>();
   const [dateBox, setDateBox] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<number | null>(null);
 
@@ -141,7 +141,7 @@ export default function SystemPage(props: AdminProps) {
             <div className="w-4"></div>
             {date != null || date != undefined ? (
               <>
-                <Button onClick={() => setDate(null)}>Clear Search</Button>
+                <Button onClick={() => setDate(undefined)}>Clear Search</Button>
               </>
             ) : null}
           </div>
