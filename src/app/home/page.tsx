@@ -8,6 +8,7 @@ import Qc from "./Qc";
 import Scanner from "./Scanner";
 import MetaPage from "./Meta";
 import Verify from "./Verify";
+import SystemPage from "./System";
 
 const InexPage = () => {
   const id = cookies().get("id")?.value;
@@ -15,7 +16,7 @@ const InexPage = () => {
 
   switch (role) {
     case Role.SYSTEM:
-      return <Admin id={id} />;
+      return <SystemPage id={id} />;
     case Role.ADMIN:
       return <Admin id={id} />;
     case Role.ENTRY:
