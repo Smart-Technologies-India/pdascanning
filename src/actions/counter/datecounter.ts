@@ -110,6 +110,7 @@ const DateCounter = async (
     const userresponse = await prisma.user.findMany({
       where: {
         status: "ACTIVE",
+        deletedAt: null,
         OR: [
           {
             role: "ENTRY",

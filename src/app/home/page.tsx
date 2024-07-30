@@ -9,10 +9,15 @@ import Scanner from "./Scanner";
 import MetaPage from "./Meta";
 import Verify from "./Verify";
 import SystemPage from "./System";
+import { redirect } from "next/navigation";
 
 const InexPage = () => {
   const id = cookies().get("id")?.value;
   const role = cookies().get("role")?.value as Role;
+
+  if (role == Role.DEPARTMENT) {
+    return redirect("/dashboard");
+  }
 
   switch (role) {
     case Role.SYSTEM:

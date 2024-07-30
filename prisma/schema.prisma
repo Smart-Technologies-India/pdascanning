@@ -25,6 +25,7 @@ enum Role {
   QC
   META
   VERIFY
+  DEPARTMENT
 }
 
 enum LocationStatus {
@@ -107,6 +108,7 @@ model file {
   physicalFileLocationId Int?
   startAt                DateTime?
   endAt                  DateTime?
+  file_ref               String?
   status                 FileStatus              @default(ENTRY)
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
