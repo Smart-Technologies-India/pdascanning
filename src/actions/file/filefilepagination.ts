@@ -13,7 +13,11 @@ const GetAllFilesPageneted = async (
   payload: GetAllFilesPagenetedPayload
 ): Promise<ApiResponseType<any | null>> => {
   try {
-    const fileCount = await prisma.file.count();
+    const fileCount = await prisma.file.count({
+      where: {
+        deletedAt: null,
+      },
+    });
     if (fileCount === 0) {
       return {
         status: false,
@@ -23,6 +27,9 @@ const GetAllFilesPageneted = async (
       };
     }
     const file = await prisma.file.findMany({
+      where: {
+        deletedAt: null,
+      },
       include: {
         user: true,
         village: true,
