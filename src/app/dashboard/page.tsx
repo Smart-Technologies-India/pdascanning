@@ -15,6 +15,8 @@ import {
   CarbonAlignBoxTopCenter,
   CircumHome,
   Fa6SolidXmark,
+  FluentAppsListDetail24Regular,
+  FluentGlobeLocation24Regular,
   FluentMdl2Search,
   MaterialSymbolsBook5,
 } from "@/components/icons";
@@ -295,7 +297,7 @@ const Dashboard = () => {
             <div className="grow"></div>
             <div>
               <div className="rounded-full p-2 bg-rose-500">
-                <Carbon3dCurveAutoVessels className="text-xl text-white" />
+                <FluentAppsListDetail24Regular className="text-xl text-white" />
               </div>
             </div>
           </div>
@@ -349,8 +351,8 @@ const Dashboard = () => {
               </div>
               <div className="grow"></div>
               <div>
-                <div className="rounded-full p-2 bg-emerald-500">
-                  <CarbonAlignBoxTopCenter className="text-xl text-white" />
+                <div className="rounded-full p-2 bg-cyan-500">
+                  <FluentGlobeLocation24Regular className="text-xl text-white" />
                 </div>
               </div>
             </div>

@@ -73,6 +73,9 @@ const villageFileType = async (
       where: {
         deletedAt: null,
       },
+      orderBy: {
+        name: "asc",
+      },
     });
 
     interface villlagelist {
