@@ -15,6 +15,7 @@ const DashBoardCount = async (
     const filecout = await prisma.file.count();
     // const pagecount = 206739;
     const pagecount = 200619;
+
     // const mapcount = 18328;
     const mapcount = 12388;
 
