@@ -51,6 +51,8 @@ const EntryForm = (props: EntryProps) => {
 
   const [entry, setEntry] = useState<file[]>([]);
 
+  const [isSubmittng, setSubmitting] = useState<boolean>(false);
+
   const init = async () => {
     setLoading(true);
     const response = await GetUser({ id: parseInt(props.id) });
@@ -75,7 +77,6 @@ const EntryForm = (props: EntryProps) => {
       setEntry(entryfile.data ?? []);
     }
 
-
     setLoading(false);
   };
 
@@ -92,6 +93,7 @@ const EntryForm = (props: EntryProps) => {
   const file_no = useRef<HTMLInputElement>(null);
 
   const submit = async () => {
+    setSubmitting(true);
     const result = safeParse(FileSchema, {
       file_no: file_no.current!.value.trim(),
       year: parseInt(year),
@@ -109,11 +111,11 @@ const EntryForm = (props: EntryProps) => {
       if (filesubmit.status) {
         file_no.current!.value = "";
 
-        toast.success("File Submitted Successfully");
-
         router.replace(`/viewfile/${filesubmit!.data!.id}`);
+        return toast.success("File Submitted Successfully");
       } else {
-        toast.error(filesubmit.message);
+        setSubmitting(false);
+        return toast.error(filesubmit.message);
       }
     } else {
       let errorMessage = "";
@@ -122,7 +124,8 @@ const EntryForm = (props: EntryProps) => {
       } else {
         errorMessage = result.issues[0].path![0].key + " is required";
       }
-      toast.error(errorMessage);
+      setSubmitting(false);
+      return toast.error(errorMessage);
     }
   };
 
@@ -261,9 +264,16 @@ const EntryForm = (props: EntryProps) => {
           </Select>
         </div>
       </Card>
-      <Button className="w-full mt-4" onClick={submit}>
-        Submit
-      </Button>
+
+      {isSubmittng ? (
+        <Button className="w-full mt-4" disabled>
+          Loading...
+        </Button>
+      ) : (
+        <Button className="w-full mt-4" onClick={submit}>
+          Submit
+        </Button>
+      )}
 
       <Card className="mt-6">
         <CardHeader className="py-2 px-4 flex flex-row items-center gap-4">
