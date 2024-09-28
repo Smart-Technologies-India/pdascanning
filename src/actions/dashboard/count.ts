@@ -13,11 +13,38 @@ const DashBoardCount = async (
     const villagecout = await prisma.village.count();
     const typecout = await prisma.file_type.count();
     const filecout = await prisma.file.count();
+
+    const totalPageCount = await prisma.file.aggregate({
+      _sum: {
+        pagecount: true,
+      },
+      where: {
+        endAt: {
+          not: null,
+        },
+        deletedAt: null,
+      },
+    });
+
+    const totalMapCount = await prisma.file.aggregate({
+      _sum: {
+        mapcount: true,
+      },
+      where: {
+        endAt: {
+          not: null,
+        },
+        deletedAt: null,
+      },
+    });
+
     // const pagecount = 206739;
-    const pagecount = 200619;
+    const pagecount =
+      (totalPageCount._sum.pagecount ?? 0) +
+      (totalMapCount._sum.mapcount ?? 0) * 2;
 
     // const mapcount = 18328;
-    const mapcount = 12388;
+    const mapcount: number = totalMapCount._sum.mapcount ?? 0;
 
     const response = {
       village: villagecout,
