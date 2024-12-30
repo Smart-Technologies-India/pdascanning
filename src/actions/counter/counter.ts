@@ -304,8 +304,6 @@ const Counter = async (
       }
     }
 
-    console.log(responsedata);
-    console.log(responsedata[4].data);
 
     return {
       status: true,

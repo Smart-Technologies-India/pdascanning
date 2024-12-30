@@ -81,11 +81,8 @@ const ViewFile = (props: ViewFileProps) => {
     }
 
     const responsefile: any = await GetFile({ id: props.fileid });
-    console.log(props.fileid);
-    console.log(responsefile);
     if (responsefile.status) {
       setFileData((val: any) => responsefile.data);
-      console.log(responsefile.data);
 
       if (responsefile.data!.village) {
         setVillage(responsefile.data!.village.id);
@@ -127,15 +124,7 @@ const ViewFile = (props: ViewFileProps) => {
   };
 
   const upatefile = async () => {
-    console.log({
-      file_no: filenumberRef.current!.value,
-      applicant_name: aplicantRef.current!.value,
-      survey_number: surveyRef.current!.value,
-      remark: remarksRef.current!.value,
-      villageId: village,
-      names: names,
-      surveyNumbers: surveyNumbers,
-    });
+
     const result = safeParse(UpdateFileSchema, {
       file_no: filenumberRef.current!.value,
       applicant_name: aplicantRef.current!.value,
