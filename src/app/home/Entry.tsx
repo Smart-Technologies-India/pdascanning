@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import getFileType from "@/actions/file/getfiletype";
 import GetUser from "@/actions/user/getuser";
@@ -85,12 +84,11 @@ const EntryForm = (props: EntryProps) => {
     init();
   }, []);
 
-  const [filter, setFilter] = useState<number>(0);
-
-  
   const [year, setYear] = useState<string>("2000");
+
   const [fileType, setFileType] = useState<number>(0);
   const [assign, setAssign] = useState<number>(0);
+  const [filter, setFilter] = useState<number>(0);
 
   const file_no = useRef<HTMLInputElement>(null);
 

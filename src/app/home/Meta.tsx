@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import getFileType from "@/actions/file/getfiletype";
 import GetUser from "@/actions/user/getuser";
@@ -101,12 +100,12 @@ const MetaPage = (props: MetaProps) => {
           setSearch(true);
           toast.success("File search completed");
         } else {
-          setSearchData([]);
+          setSearchData(null ?? []);
           setSearch(false);
           toast.error("No data found");
         }
       } else {
-        setSearchData([]);
+        setSearchData(null ?? []);
         setSearch(false);
         toast.error("No data found");
       }

@@ -15,9 +15,6 @@ interface AddFilePayload {
   names: string[];
   surveyNumbers: string[];
   meta: number;
-  file_no: string;
-  year: number;
-  typeId: number;
   location: number;
 }
 
@@ -43,9 +40,6 @@ const AddFile = async (
       villageId: payload.villageId,
       meta: payload.meta,
       physicalFileLocationId: payload.location,
-      file_no: payload.file_no,
-      year: payload.year,
-      typeId: payload.typeId,
     };
 
     if (payload.aadhar) {

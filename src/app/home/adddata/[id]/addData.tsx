@@ -1,17 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { default as MulSelect } from "react-select";
 
-import {
-  file,
-  file_type,
-  physical_file_location,
-  user,
-  village,
-} from "@prisma/client";
+import { file, physical_file_location, user, village } from "@prisma/client";
 import GetUser from "@/actions/user/getuser";
 import getVillage from "@/actions/getvillage";
 import GetFile from "@/actions/file/getfile";
@@ -43,7 +35,6 @@ import updateFile from "@/actions/file/updatefile";
 import Link from "next/link";
 import GetAllCupboardNumber from "@/actions/location/getalllocation";
 import GetCupboardNumber from "@/actions/location/getlocation";
-import getFileType from "@/actions/getfiletype";
 
 interface AddMetaDataProps {
   id: number;
@@ -52,7 +43,6 @@ interface AddMetaDataProps {
 
 const AddMetaData = (props: AddMetaDataProps) => {
   const router = useRouter();
-  const [fileTypes, setFileTypes] = useState<file_type[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
   const [userdata, setUserData] = useState<user | null>(null);
   const [filedata, setFiledata] = useState<any>(null);
@@ -111,10 +101,6 @@ const AddMetaData = (props: AddMetaDataProps) => {
         router.back();
       }
     }
-    const file_type_response = await getFileType({});
-    if (file_type_response.status) {
-      setFileTypes(file_type_response.data!);
-    }
 
     setLoading(false);
   };
@@ -124,10 +110,6 @@ const AddMetaData = (props: AddMetaDataProps) => {
   }, []);
 
   const [village, setVillage] = useState<number>(0);
-
-  const [year, setYear] = useState<string>("2000");
-  const [fileType, setFileType] = useState<number>(0);
-  const file_no = useRef<HTMLInputElement>(null);
 
   const applicant_name = useRef<HTMLInputElement>(null);
   const survey = useRef<HTMLInputElement>(null);
@@ -148,9 +130,6 @@ const AddMetaData = (props: AddMetaDataProps) => {
       villageId: village,
       names: names,
       surveyNumbers: surveyNumbers,
-      file_no: file_no.current!.value.trim(),
-      year: parseInt(year),
-      typeId: fileType,
     });
     if (result.success) {
       const nameset = new Set(names);
@@ -167,9 +146,6 @@ const AddMetaData = (props: AddMetaDataProps) => {
         surveyNumbers: Array.from(surveyset),
         meta: props.id,
         location: locationId,
-        file_no: result.output.file_no,
-        typeId: result.output.typeId,
-        year: result.output.year,
       });
       if (filesubmit.status) {
         toast.success("File Submitted Successfully");
@@ -251,56 +227,6 @@ const AddMetaData = (props: AddMetaDataProps) => {
           <label htmlFor="fileid" className="w-60">
             File No :
           </label>
-          <Input
-            placeholder="Enter File No"
-            id="fileno"
-            name="fileno"
-            ref={file_no}
-          />
-        </div>
-        <div className="flex gap-2 items-center mt-4">
-          <label htmlFor="fileid" className="w-60">
-            File Type :
-          </label>
-          <Select
-            onValueChange={(val) => {
-              setFileType(parseInt(val));
-            }}
-          >
-            <SelectTrigger className="">
-              <SelectValue placeholder="Select File Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>File Type</SelectLabel>
-                {fileTypes.map((val) => (
-                  <SelectItem key={val.id} value={val.id.toString()}>
-                    {val.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex gap-2 items-center  mt-4">
-          <label htmlFor="year" className="w-60">
-            Year :
-          </label>
-          <MulSelect
-            isMulti={false}
-            options={options}
-            className="w-full accent-slate-900"
-            onChange={(val) => {
-              if (!val) return;
-              setYear(val.value);
-            }}
-          />
-        </div>
-        {/* <div className="flex gap-2 items-center mt-4">
-          <label htmlFor="fileid" className="w-60">
-            File No :
-          </label>
           <p>{filedata!.file_no}</p>
         </div>
         <div className="flex gap-2 items-center mt-4">
@@ -314,7 +240,7 @@ const AddMetaData = (props: AddMetaDataProps) => {
             Year :
           </label>
           <p>{filedata!.year}</p>
-        </div> */}
+        </div>
         <div className="flex gap-2 items-center mt-4">
           <label htmlFor="fileid" className="w-60">
             Village :
