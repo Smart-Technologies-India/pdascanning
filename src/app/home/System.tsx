@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import logout from "@/actions/logout";
 import GetUser from "@/actions/user/getuser";
@@ -59,7 +60,6 @@ export default function SystemPage(props: AdminProps) {
 
       const countrespone = await Counter({});
       if (countrespone.status && countrespone.data) {
-        console.log(countrespone.data);
         setData(countrespone.data);
       }
 
@@ -75,7 +75,6 @@ export default function SystemPage(props: AdminProps) {
       date: date,
     });
     if (response.status && response.data) {
-      console.log(response.data);
       setDateSearch(response.data);
     }
     setLoading(false);
