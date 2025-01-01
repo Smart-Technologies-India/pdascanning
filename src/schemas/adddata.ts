@@ -12,6 +12,8 @@ import {
 
 const AddFileSchema = object(
   {
+    map_count: string([minLength(1, "Please enter page count.")]),
+    page_count: string([minLength(1, "Please enter map count.")]),
     file_no: string([minLength(1, "Please enter file number.")]),
     year: number([minValue(1, "Please enter file year.")]),
     typeId: number([minValue(1, "Select file type.")]),
@@ -29,6 +31,10 @@ const AddFileSchema = object(
       ["villageId"]
     ),
     forward(
+      custom((input) => input.page_count != "0", "Enter valid page count."),
+      ["page_count"]
+    ),
+    forward(
       custom((input) => input.typeId != 0, "Select file type."),
       ["typeId"]
     ),
@@ -37,4 +43,3 @@ const AddFileSchema = object(
 
 type AddFileForm = Input<typeof AddFileSchema>;
 export { AddFileSchema, type AddFileForm };
-

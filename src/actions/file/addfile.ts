@@ -19,6 +19,8 @@ interface AddFilePayload {
   year: number;
   typeId: number;
   location: number;
+  page_count: number;
+  map_count: number;
 }
 
 const AddFile = async (
@@ -46,6 +48,8 @@ const AddFile = async (
       file_no: payload.file_no,
       year: payload.year,
       typeId: payload.typeId,
+      pagecount: payload.page_count,
+      mapcount: payload.map_count,
     };
 
     if (payload.aadhar) {
@@ -101,4 +105,3 @@ const AddFile = async (
 };
 
 export default AddFile;
-

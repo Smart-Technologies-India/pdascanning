@@ -56,10 +56,15 @@ const EntryForm = (props: EntryProps) => {
   const init = async () => {
     setLoading(true);
     const response = await GetUser({ id: parseInt(props.id) });
+    console.log(response);
+    console.log(parseInt(props.id));
+
     if (response.status) {
       setUserData((val) => response.data);
     } else {
       toast.error(response.message);
+
+      await logoutbtn();
     }
 
     const scanner_response = await GetScanners({});

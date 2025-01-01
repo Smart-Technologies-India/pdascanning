@@ -129,6 +129,9 @@ const AddMetaData = (props: AddMetaDataProps) => {
   const [fileType, setFileType] = useState<number>(0);
   const file_no = useRef<HTMLInputElement>(null);
 
+  const map_count = useRef<HTMLInputElement>(null);
+  const page_count = useRef<HTMLInputElement>(null);
+
   const applicant_name = useRef<HTMLInputElement>(null);
   const survey = useRef<HTMLInputElement>(null);
   const adhar = useRef<HTMLInputElement>(null);
@@ -143,6 +146,8 @@ const AddMetaData = (props: AddMetaDataProps) => {
     }
 
     const result = safeParse(AddFileSchema, {
+      page_count: page_count.current!.value.trim(),
+      map_count: map_count.current!.value.trim(),
       applicant_name: applicant_name.current!.value.trim(),
       survey_number: survey.current!.value.trim(),
       villageId: village,
@@ -170,6 +175,8 @@ const AddMetaData = (props: AddMetaDataProps) => {
         file_no: result.output.file_no,
         typeId: result.output.typeId,
         year: result.output.year,
+        page_count: parseInt(result.output.page_count),
+        map_count: parseInt(result.output.map_count),
       });
       if (filesubmit.status) {
         toast.success("File Submitted Successfully");
@@ -256,6 +263,28 @@ const AddMetaData = (props: AddMetaDataProps) => {
             id="fileno"
             name="fileno"
             ref={file_no}
+          />
+        </div>
+        <div className="flex gap-2 items-center mt-4">
+          <label htmlFor="page_count" className="w-60">
+            Page Count :
+          </label>
+          <Input
+            placeholder="Enter Page Count"
+            id="page_count"
+            name="page_count"
+            ref={page_count}
+          />
+        </div>
+        <div className="flex gap-2 items-center mt-4">
+          <label htmlFor="map_count" className="w-60">
+            Map Count :
+          </label>
+          <Input
+            placeholder="Enter Map Count"
+            id="map_count"
+            name="map_count"
+            ref={map_count}
           />
         </div>
         <div className="flex gap-2 items-center mt-4">
@@ -545,4 +574,3 @@ const InputCard = (props: InputCardProps) => {
     </Card>
   );
 };
-
