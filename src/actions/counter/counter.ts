@@ -304,7 +304,6 @@ const Counter = async (
       }
     }
 
-
     return {
       status: true,
       data: responsedata,
