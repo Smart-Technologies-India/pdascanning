@@ -88,7 +88,7 @@ model file {
   survey_number          String?
   year                   Int?
   aadhar                 String?
-  remarks                String?
+  remarks                String?                 @db.MediumText
   type                   file_type?              @relation(fields: [typeId], references: [id])
   typeId                 Int?
   village                village?                @relation(fields: [villageId], references: [id])
